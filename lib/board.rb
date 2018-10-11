@@ -33,7 +33,16 @@ class Board
     end
   end
 
-  def winning_move?(row_idx, col_idx)
+  def move(symbol, *position)
+    row, column = position
+    unless self[row, column].nil?
+      raise IllegalMoveError.new("\nThat position is taken.\n")
+    end
+    self[row, column] = symbol
+  end
+
+  def winning_move?(*position)
+    row_idx, col_idx = position
     winning_row?(row_idx) || winning_column?(col_idx) || winning_diagonal?(row_idx, col_idx)
   end
 
@@ -41,13 +50,13 @@ class Board
 
   def winning_row?(row_idx)
     # The board is arranged into rows by default, so can be accessed with the index
-    winning_combination(board[row_idx].uniq)
+    winning_combination?(board[row_idx].uniq)
   end
 
   def winning_column?(col_idx)
     # Columns need to be derived from coordinates
     column_content = (0...size).inject([]) do |accum, row_idx|
-      accum << self.[row_idx, col_idx]
+      accum << self[row_idx, col_idx]
     end
 
     winning_combination?(column_content.uniq)
@@ -58,15 +67,26 @@ class Board
     # where they are the same for all squares
     if row_idx == col_idx
       content = []
-      (0...size).each { |idx| content << self.[idx, idx] }
+      (0...size).each { |idx| content << self[idx, idx] }
       return true if winning_combination?(content.uniq)
     end
 
     # If the coordinates of the square to check add up to 1 less than the length
     # of the board (because arrays start at 0), check all squares where that is the case
     combined_size = size - 1
+    if row_idx + col_idx == combined_size
+      content = []
+      row = 0
+      col = combined_size
+      size.times do
+        content << self[row, col]
+        row += 1
+        col -= 1
+      end
+      return true if winning_combination?(content.uniq)
+    end
 
-
+    false
   end
 
   def winning_combination?(content)
