@@ -13,30 +13,48 @@ class Game
 
   def play
     turn = nil
-    winner = nil
+    winner = false
 
     until winner
-      turn = (turn == :x ? :o : :x)
+      turn = turn == :x ? :o : :x
       begin
         current_player = players[turn]
-        puts "#{current_player.name}'s Turn (#{turn.to_s.upcase})"
-        board.display_board
-        move = current_player.get_move
+        if current_player.class == HumanPlayer
+          puts "#{current_player.name}'s Turn (#{turn.to_s.upcase})"
+          board.display_board
+        end
+
+        move = get_move_for(current_player)
 
         board.move(turn, *move)
+
         if board.winning_move?(*move)
           winner = true
-          if current_player.class == HumanPlayer
-            puts "Congratulations #{current_player.name}, you win!"
-          else
-            puts "Too bad, the computer won this time..."
-          end
-          board.display_board
+          congratulate_winner(current_player)
         end
       rescue IllegalMoveError => error
         puts error.message
         retry
       end
     end
+  end
+
+  private
+
+  def get_move_for(player)
+    if player.class == HumanPlayer
+      player.get_move
+    else
+      player.get_move(board)
+    end
+  end
+
+  def congratulate_winner(player)
+    if player.class == HumanPlayer
+      puts "Congratulations #{player.name}, you win!"
+    else
+      puts "Too bad, the computer won this time..."
+    end
+    board.display_board
   end
 end
