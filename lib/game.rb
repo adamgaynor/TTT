@@ -1,11 +1,11 @@
 class Game
   attr_reader :board, :players
 
-  def initialize(ai: true, size: 3)
+  def initialize(computer: true, size: 3)
     @board = Board.new(size: size)
     @players = {
       x: HumanPlayer.new("Player 1"),
-      o: ai ? ComputerPlayer.new : HumanPlayer.new("Player 2")
+      o: computer ? ComputerPlayer.new : HumanPlayer.new("Player 2")
     }
     @players[:x].set_board_size(size)
     @players[:o].set_board_size(size)
