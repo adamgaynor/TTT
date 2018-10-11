@@ -1,7 +1,7 @@
 class Game
   attr_reader :board, :players
 
-  def initialize(computer: true, smarter_computer: false, size: 3)
+  def initialize(computer: true, smarter_computer: true, size: 3)
     @board = Board.new(size: size)
     @players = {
       x: HumanPlayer.new("Player 1"),

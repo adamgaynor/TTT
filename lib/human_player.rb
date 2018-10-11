@@ -4,7 +4,7 @@ class HumanPlayer < Player
   end
 
   def get_move
-    puts "Please enter coordinates to play, e.g. 1,2"
+    print "Please enter coordinates to play, e.g. 1,2: "
     begin
       move = gets.chomp
       parse_move(move)
