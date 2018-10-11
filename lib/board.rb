@@ -46,6 +46,17 @@ class Board
     winning_row?(row_idx) || winning_column?(col_idx) || winning_diagonal?(row_idx, col_idx)
   end
 
+  def duplicate
+    dup = Board.new(size: size)
+    (0...board.size).each do |row|
+      (0...board.size).each do |column|
+        dup[row, column] = self[row, column]
+      end
+    end
+
+    dup
+  end
+
   private
 
   def winning_row?(row_idx)

@@ -1,22 +1,25 @@
 class Game
   attr_reader :board, :players
 
-  def initialize(computer: true, size: 3)
+  def initialize(computer: true, smarter_computer: false, size: 3)
     @board = Board.new(size: size)
     @players = {
       x: HumanPlayer.new("Player 1"),
-      o: computer ? ComputerPlayer.new : HumanPlayer.new("Player 2")
+      o: computer ? ComputerPlayer.new(smarter_computer, :o) : HumanPlayer.new("Player 2")
     }
     @players[:x].set_board_size(size)
     @players[:o].set_board_size(size)
   end
 
   def play
+    turn_count = 0
     turn = nil
     winner = false
 
     until winner
       turn = turn == :x ? :o : :x
+      turn_count += 1
+
       begin
         current_player = players[turn]
         if current_player.class == HumanPlayer
@@ -31,6 +34,13 @@ class Game
         if board.winning_move?(*move)
           winner = true
           congratulate_winner(current_player)
+          exit
+        end
+
+        if turn_count == board.size ** 2
+          puts "It's a draw."
+          board.display_board
+          exit
         end
       rescue IllegalMoveError => error
         puts error.message
@@ -45,7 +55,7 @@ class Game
     if player.class == HumanPlayer
       player.get_move
     else
-      player.get_move(board)
+      player.get_move(board, player.smart)
     end
   end
 

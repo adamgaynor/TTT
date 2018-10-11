@@ -15,10 +15,10 @@ end
 def get_board_size
   size = 0
   puts "What size board? (between 3 and 10)"
-  until size > 3 && size < 10
+  until size >= 3 && size <= 9
     input = gets.chomp
     size = input.to_i
-    if size < 3 && size < 10
+    if size < 3 || size > 9
       puts "That is not a valid board size"
     end
   end
@@ -30,6 +30,6 @@ if $PROGRAM_NAME == __FILE__
   play_against_computer = play_against_computer?
   board_size = get_board_size
 
-  game = Game.new(computer: play_against_computer, size: board_size)
+  game = Game.new(computer: play_against_computer, smarter_computer: true, size: board_size)
   game.play
 end
